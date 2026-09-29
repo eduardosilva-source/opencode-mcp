@@ -17,13 +17,17 @@ vsc-extension-quickstart.md
 
 # Tests
 out/test/**
+test/**
 
 # Dev docs & notes (not for end users)
 .atl/**
+.engram/**
 comandos.md
 PROVIDERS.md
 REGLAS.md
 ROADMAP.md
+# Private provider docs (kept out of the published package)
+docs/**
 
 # README screenshots only
 resources/1.png
@@ -34,3 +38,5 @@ resources/4.png
 # Secrets / local config
 node_modules/**
 config/**
+.env
+.env.local

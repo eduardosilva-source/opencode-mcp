@@ -6,7 +6,7 @@
 
 **Panel lateral de chat para VS Code, Antigravity y Cursor** conectado a tu **OpenCode** local o a **LM Studio**.
 
-[![Versión](https://img.shields.io/badge/versión-1.0.53-blue)](CHANGELOG.md)
+[![Versión](https://img.shields.io/badge/versión-1.0.54-blue)](CHANGELOG.md)
 [![VS Code](https://img.shields.io/badge/VS%20Code-≥1.85-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
 [![Licencia](https://img.shields.io/badge/licencia-MIT-green)](LICENSE)
 
@@ -115,6 +115,16 @@ Además, el flujo de envio ahora incluye:
 ## Novedades recientes
 
 <details open>
+<summary><strong>v1.0.54</strong> — Documentación sincronizada y paquete limpio</summary>
+
+- **CHANGELOG completo**: restaurado el historial (46 versiones) con las entradas perdidas 1.0.31–1.0.34 y la 1.0.20 reparada.
+- **README al día**: estructura con los 20 módulos de `src/`, tabla con los 16 comandos y novedades de 1.0.47.
+- **VSIX limpio**: `docs/` (documentación privada) ya no se incluye en el paquete publicado.
+- Correcciones de i18n (`package.nls.*`).
+
+</details>
+
+<details>
 <summary><strong>v1.0.53</strong> — Chat sin silencios y publicación</summary>
 
 - **Watchdog de chat** (v1.0.52): si SSE no avisa, consulta mensajes cada 2s y muestra errores sin *Reload Window*.
@@ -135,6 +145,15 @@ Además, el flujo de envio ahora incluye:
 </details>
 
 <details>
+<summary><strong>v1.0.47</strong> — Conexión Windows (`spawn UNKNOWN`)</summary>
+
+- **`serverProcess.ts`**: detecta el stub inválido de `opencode.exe` (< 64 KB, sin cabecera PE) que deja un postinstall bloqueado por npm.
+- Busca el binario real en los paquetes `opencode-windows-*` o usa `npx opencode-ai` como fallback.
+- Mensaje de error con comando de reparación: `npm install -g opencode-ai --allow-scripts=opencode-ai`.
+
+</details>
+
+<details>
 <summary><strong>v1.0.46</strong> — Auto-arranque de OpenCode más fiable</summary>
 
 - Si el servidor cae o no arrancó al abrir el IDE, al refrescar el panel se **reconecta** y vuelve a lanzar `opencode serve` (con `autoStartServer` activo).
@@ -148,7 +167,7 @@ Además, el flujo de envio ahora incluye:
 - **Listado de modelos fiable**: el selector usa solo el catálogo vivo de OpenCode (`GET /provider`). Eliminados modelos hardcodeados obsoletos (p. ej. Llama 3 en Replicate, Qwen 2.5 fijo, ElevenLabs TTS).
 - **Heurísticas de visión**: palabras clave actualizadas (`claude-4`, `gpt-4.1`, `gpt-5`, `gemini-2.5`, `qwen-vl`, etc.) para el icono de imagen en el desplegable.
 - **Failover**: plantilla `config/apis.example.json` ampliada (`google`, `huggingface`, `nvidia`, `meta`, `minimax`, …). Los IDs deben coincidir con OpenCode (`minimax` = internacional).
-- **Documentación**: guía práctica en [`docs/providers-de-opencode-lista-completa-revisado.md`](docs/providers-de-opencode-lista-completa-revisado.md); catálogo completo de 176 nombres en [`docs/Proveedores.md`](docs/Proveedores.md).
+- **Documentación**: guía práctica de proveedores OpenCode en [`config/apis.example.json`](config/apis.example.json) y documentación oficial en [opencode.ai/docs/providers](https://opencode.ai/docs/providers).
 
 </details>
 
@@ -285,7 +304,7 @@ npm run package
 Luego:
 
 - **VS Code / Cursor:** `Ctrl+Shift+P` → **Extensions: Install from VSIX...**
-- **Cursor (CLI):** `cursor --install-extension opencode-mcp-vscode-1.0.53.vsix --force`
+- **Cursor (CLI):** `cursor --install-extension opencode-mcp-vscode-1.0.54.vsix --force`
 
 > **Importante:** *Reload Window* carga la extensión **instalada**, no el código fuente del repo. Tras instalar un VSIX nuevo, recarga la ventana una vez.
 
@@ -298,7 +317,7 @@ Luego:
 | Añadir archivo actual | `Ctrl+Alt+Shift+F` | OpenCode: Añadir archivo actual al contexto |
 | Añadir selección | `Ctrl+Alt+Shift+S` | OpenCode: Añadir selección al contexto |
 | Añadir todos los abiertos | — | OpenCode: Añadir archivos abiertos al contexto |
-| Estado Git | — | OpenCode: Añadir información de Git al contexto |
+| Estado Git | — | Botón de Git en el chat (contexto automático) |
 | Adjuntar carpeta | — | Botón **+ Añadir contexto** en el chat |
 | Ver y quitar archivos | — | Botón **Archivos (N)** o menú **+ Añadir contexto** |
 
@@ -392,7 +411,7 @@ Ejemplo (IDs = slugs de OpenCode):
 
 Ante HTTP 429 o errores 5xx, la extensión rota la key y reintenta; si no quedan keys en el proveedor actual, salta al siguiente con claves disponibles. El usuario ve mensaje de sistema, toast (primera vez) e indicador en la barra del modelo. Detalle en **Output → OpenCode Chat**.
 
-Guía de proveedores: [`docs/providers-de-opencode-lista-completa-revisado.md`](docs/providers-de-opencode-lista-completa-revisado.md). Documentación oficial de OpenCode: [opencode.ai/docs/providers](https://opencode.ai/docs/providers).
+Plantilla de failover por proveedor: [`config/apis.example.json`](config/apis.example.json). Documentación oficial de OpenCode: [opencode.ai/docs/providers](https://opencode.ai/docs/providers).
 
 ---
 
@@ -535,6 +554,14 @@ Los MCP del chat en VS Code se configuran en **OpenCode**, no en la extensión.
 | `opencode.addOpenFilesToContext` | Añadir archivos abiertos |
 | `opencode.setApiKeys` | Configurar API keys de failover |
 | `opencode.clearApiKeys` | Borrar API keys de failover |
+| `opencode.addTemplate` | Guardar un prompt como plantilla |
+| `opencode.selectTemplate` | Insertar una plantilla guardada (`/` en el chat) |
+| `opencode.showMetrics` | Mostrar métricas de uso |
+| `opencode.explainCode` | Explicar código seleccionado (`Ctrl+Alt+E`) |
+| `opencode.generateTests` | Generar tests del código seleccionado (`Ctrl+Alt+T`) |
+| `opencode.findBugs` | Buscar bugs en el código seleccionado (`Ctrl+Alt+B`) |
+| `opencode.refactorCode` | Refactorizar código seleccionado |
+| `opencode.explainFile` | Explicar archivo actual |
 
 ---
 
@@ -545,7 +572,7 @@ npm install
 npm run compile      # TypeScript
 npm run watch        # watch mode
 npm run package      # genera .vsix
-npm test             # si hay tests
+npm test             # pruebas (node:test)
 ```
 
 **F5** en VS Code abre Extension Development Host con el código del repo (sin instalar VSIX).
@@ -554,20 +581,30 @@ npm test             # si hay tests
 
 ```
 src/
-  extension.ts          # Activación y comandos
-  opencodeService.ts    # OpenCode / LM Studio, sesiones, failover
-  chatViewProvider.ts   # Webview y bridge de mensajes
-  contextAttachments.ts # Contexto adjunto y recorte
-  contextBudget.ts      # Estimación de tokens y prioridades
-  fileContext.ts        # Inline de archivos/carpetas
-  logger.ts             # Output Channel
-  httpClient.ts         # Cliente HTTP
-  gitProvider.ts        # Info Git
-  settings.ts           # Configuración
-resources/webview/      # index.html, main.js (UI del chat)
+  extension.ts           # Activación y comandos
+  opencodeService.ts     # OpenCode / LM Studio, sesiones, failover
+  chatViewProvider.ts    # Webview y bridge de mensajes
+  contextAttachments.ts  # Contexto adjunto y recorte
+  contextBudget.ts       # Estimación de tokens y prioridades
+  contextCache.ts        # Caché de contexto (evita lecturas redundantes)
+  fileContext.ts         # Inline de archivos/carpetas
+  logger.ts              # Output Channel
+  httpClient.ts          # Cliente HTTP y SSE
+  gitProvider.ts         # Info Git
+  settings.ts            # Configuración
+  modelPolicy.ts         # Modelos EOL, fallbacks y filtrado
+  serverProcess.ts       # Arranque/parada de `opencode serve`
+  securityManager.ts     # Validación de envío, auditoría y cifrado
+  metricsCollector.ts    # Métricas de uso
+  promptManager.ts       # Plantillas de prompts
+  localSessionManager.ts # Persistencia de sesiones LM Studio
+  imageHelper.ts         # Imágenes temporales y multimodal
+  parts.ts               # Normalización de partes de mensaje
+  types.ts               # Tipos compartidos
+resources/webview/       # index.html, main.js (UI del chat)
 config/apis.example.json # Plantilla JSON de failover por proveedor
-docs/                   # Guías de proveedores OpenCode
-opencode-adapter.mjs    # Servidor MCP
+opencode-adapter.mjs     # Servidor MCP
+test/                    # Pruebas (node:test)
 ```
 
 ## Solución de problemas
@@ -581,7 +618,7 @@ opencode-adapter.mjs    # Servidor MCP
 | Sigo viendo modelos cloud con LM Studio | Activa `localModeEnabled` (pestaña User), instala VSIX ≥ 1.0.27, recarga |
 | Modo local pero error al enviar | Comprueba que LM Studio esté corriendo y que `localModeUrl` coincida |
 | La IA no ve imágenes | Modelo con visión cargado en LM Studio; miniatura visible en barra de contexto |
-| Modelos que no responden / EOL (`410 Gone`) | No es un fallo de la extensión: OpenCode sigue listando modelos retirados en `/provider`. Usa otro modelo (tabla en [Modelos retirados](#modelos-retirados-eol-410-gone)), `blacklist` en `opencode.json`, o instala VSIX ≥ 1.0.53 para filtro, watchdog de errores y auto-cambio en el panel |
+| Modelos que no responden / EOL (`410 Gone`) | No es un fallo de la extensión: OpenCode sigue listando modelos retirados en `/provider`. Usa otro modelo (tabla en [Modelos retirados](#modelos-retirados-eol-410-gone)), `blacklist` en `opencode.json`, o instala VSIX ≥ 1.0.54 para filtro, watchdog de errores y auto-cambio en el panel |
 | Cambios del repo no aparecen | Reinstala el `.vsix` compilado; Reload Window no lee el repo directamente |
 | Depurar envíos / failover | **View → Output → OpenCode Chat** |
 
